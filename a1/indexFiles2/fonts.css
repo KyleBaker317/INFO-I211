@@ -1,0 +1,10 @@
+@charset "UTF-8";
+/* CSS Document */
+@font-face {
+font-family: OstrichSansBold;
+src: url('fonts/ostrich-sans/Ostrich_Bold.ttf');
+}
+@font-face {
+font-family: OstrichSansBold;
+src: url('fonts/ostrich-sans/webfonts/ostrich-bold-webfont.eot'); /* EI */
+}

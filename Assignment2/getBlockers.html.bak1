@@ -1,0 +1,242 @@
+<html>
+  <head>
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<title>Get Blockers</title>
+	<link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all" />
+	<link href="/library/skin/neo-oncourse/tool.css" type="text/css" rel="stylesheet" media="all" />
+	<style>body
+	{padding: 5px !important;}
+	#hidden {visibility:hidden}</style>
+</head>
+
+<!-- I211 Spring 2014 - Lab 13 -->
+<!-- Baker, Kyle -->
+<!-- kylbaker@indiana.edu -->
+<!-- 15 -->
+<!-- Erika Finkle, Mike Schulenburg, Gabe McHaley -->
+<style>
+input[type=submit] {
+	width: 20em;  height: 2em;
+	line-height : 27px;
+}
+</style>
+
+<html>
+<head>
+	<title>I211 : towards a Javascript game</title>
+</head>
+<body>
+<div id = "test"> </div>
+<script>
+var size = 10
+var xChaserPosition = Math.round(randrange(0,(size - 1)));
+var yChaserPosition = Math.round(randrange(0,(size - 1)));
+
+var yRunnerPosition = Math.round(randrange(0,(size - 1)));
+var xRunnerPosition = Math.round(randrange(0,(size - 1)));
+
+var xDefeaterPosition = Math.round(randrange(0,(size - 1)));
+var yDefeaterPosition = Math.round(randrange(0,(size - 1)));
+
+var xBlocker1Position = Math.round(randrange(0,(size - 1)));
+var yBlocker1Position = Math.round(randrange(0,(size - 1)));
+
+var xBlocker2Position = Math.round(randrange(0,(size - 1)));
+var yBlocker2Position = Math.round(randrange(0,(size - 1)));
+
+var xBlocker3Position = Math.round(randrange(0,(size - 1)));
+var yBlocker3Position = Math.round(randrange(0,(size - 1)));
+
+var blockers = [[5,0]]
+function nextPosition(){
+	var next = Math.round(randrange(-1,1));
+	console.log("next:",next);
+	return next;
+}
+function getAIPosition(x,y){
+	/*
+	1 = up;
+	2 = down;
+	3 = left;
+	4 = right;
+	5 = dontMove
+	*/
+	// Gets runner's next position
+	var oldRunnerPos = [xRunnerPosition,yRunnerPosition]
+	console.log(oldPos)
+	var newRunnerPosition = []
+	var moves = ["up", "down", "left", "right", "dontmove"]
+	console.log("Moves", moves)
+	var n = moves[Math.round(randrange(0,4))]
+	console.log("Next Move: ",n)
+	if (n == "up"){
+		newRunnerPosition = [xRunnerPosition, yRunnerPosition - 1]
+	}
+	else if (n == "down"){
+		newRunnerPosition = [xRunnerPosition, yRunnerPosition + 1]
+	}
+	else if (n == "left"){
+		newRunnerPosition = [xRunnerPosition - 1, yRunnerPosition]
+	}
+	else if (n == "right"){
+		newRunnerPosition = [xRunnerPosition + 1, yRunnerPosition]
+	}
+	else{ // Don't move
+		newRunnerPosition = [xRunnerPosition, yRunnerPosition]
+	
+	}
+	if ((newPosition[0] == -1) || (newPosition[0] == size) ||(newPosition[1] == -1) || (newPosition[1] == size)){
+		getAIPosition(xRunnerPosition,yRunnerPosition)
+	}
+	else {
+		xRunnerPosition = newPosition[0]	
+		yRunnerPosition = newPosition[1]
+	}
+
+	console.log("New Runner Position: ", newPosition)
+	/*
+	if (variable == "up"){
+		runnerIcon = '<img src="chaserUp.png" alt="@" height="30" width"30">'
+		var newPosition = [xRunnerPosition, yRunnerPosition - 1]
+		if (isIn(newPosition,blockers)){console.log("IN BLOCK")}
+		if (yChaserPosition == 0) {
+		}
+		else if (isIn(newPosition,blockers)){
+			//document.write("Fu")
+			yChaserPosition = yChaserPosition
+		}
+		else {
+			yChaserPosition -= 1
+		}
+	}
+
+	else if (variable == "down"){
+		chaserIcon = '<img src="chaserDown.png" alt="@" height="30" width"30">'
+		var newPosition = [xChaserPosition, yChaserPosition + 1]
+		console.log(newPosition)
+		console.log("Blockers:", blockers)
+		
+		if (yChaserPosition == (size - 1)) {
+			yChaserPosition = (size - 1)
+			}
+		
+		else if (isIn(newPosition,blockers)){
+			yChaserPosition = yChaserPosition
+			}
+			else {
+				yChaserPosition += 1
+			}
+	}
+	else if (variable == "left"){
+		chaserIcon = '<img src="chaserLeft.png" alt="@" height="30" width"30">'
+		var newPosition = [xChaserPosition - 1, yChaserPosition]
+		if (xChaserPosition == 0) {
+		xChaserPosition = 0
+		}
+		else if (isIn(newPosition,blockers)){
+			xChaserPosition = xChaserPosition
+		}
+		else {
+			xChaserPosition -= 1
+		}
+	}
+	else if (variable == "right"){
+		chaserIcon = '<img src="chaserRight.png" alt="@" height="30" width"30">'
+		var newPosition = [xChaserPosition + 1, yChaserPosition] 		
+		if (xChaserPosition == size - 1) {
+			xChaserPosition = (size - 1)
+		}
+		else if (isIn(newPosition,blockers)){
+			xChaserPosition = xChaserPosition
+		}
+		else {
+			xChaserPosition += 1
+		}
+	}
+	else if (variable == "dontMove")
+	{
+	}
+
+	if (TrueOrFalse == 1) {
+		xRunnerPosition += nextPosition()
+		if (xRunnerPosition > (size - 1)){
+			xRunnerPosition = (size - 1)
+		}
+		if (xRunnerPosition < 0){
+			xRunnerPosition = 0
+		}
+	}
+	else {
+		yRunnerPosition += nextPosition()
+		if (yRunnerPosition > (size - 1)){
+			yRunnerPosition = (size - 1)
+		}
+		if (yRunnerPosition < 0){
+			yRunnerPosition = 0
+		}
+	}
+	
+	// Gets Defeater's next position
+	TrueOrFalse = Math.round(randrange(0,1))
+	if (TrueOrFalse == 1) {
+		xDefeaterPosition += nextPosition()
+		if (xDefeaterPosition > (size - 1)){
+			xDefeaterPosition = (size - 1)
+		}
+		if (xDefeaterPosition < 0){
+			xDefeaterPosition = 0
+		}
+	}
+	else {
+		yDefeaterPosition += nextPosition()
+		if (yDefeaterPosition > (size - 1)){
+			yDefeaterPosition = (size - 1)
+		}
+		if (yDefeaterPosition < 0){
+			yDefeaterPosition = 0
+		}
+	}*/
+}
+getAIPosition()
+blockers = []
+function getBlockers(numberOfBlockers){
+	for (var n = 0; n < numberOfBlockers; n++){
+		var x = Math.round(randrange(0,(size - 1)));
+		var y = Math.round(randrange(0,(size - 1)));
+		var blockerPos = [x,y]
+		blockers.push(blockerPos);
+	}
+	//console.log("Blockers: ",blockers);
+}
+
+getBlockers(10);
+function isIn(item,arr) {    
+    for (var i = 0; i <= arr.length; i++) {
+		if (i >= arr.length) {return false}
+		else if (item.toString() == arr[i].toString()){return true}
+	}
+		return false;
+}
+var g = [[5,4],[4,7]]
+var t = [5,4]
+///console.log ("indexd: ",g.indexOf(t))
+//console.log ("IsIn() test: ",isIn([5,4],blockers))
+//console.log ("blocker 1 ", blockers[0])
+
+function isArray(Arr){
+	if (Arr instanceof Array) {
+		//console.log(true)
+	} else {
+		//console.log(false)
+	}
+}
+function randrange(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+for (var i = 0; i < blockers.length; i++) {
+    //console.log(blockers[i]);    
+}
+
+//console.log("Testing isIn: ",isIn("x",["x","y"]))
+</script>

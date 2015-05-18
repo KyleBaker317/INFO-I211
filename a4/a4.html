@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<!-- I211 Spring 2014 - Lab 13 -->
+<!-- Baker, Kyle -->
+<!-- kylbaker@indiana.edu -->
+<!-- 15 -->
+<!-- Erika Finkle, Mike Schulenburg, Gabe McHaley -->
+<html>
+
+<head>
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<style>
+/* edits body */
+
+body {
+	padding: 5px !important;
+}
+#hidden {
+	/* hides hidden divs */
+	visibility: hidden
+}
+td {
+	/* centers text in table elements */
+	text-align: center
+}
+	</style>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<title>BattleShip</title>
+</head>
+
+<body align="center">
+	<center>
+		<!--<div id = "hLabel">H</div>
+<div id = "wLabel">W</div>
+<div id = "xBoatPosition">rX</div>
+<div id = "yBoatPosition">rY</div>
+-->
+
+		<!--
+<table border = "1" id = "playfield">
+-->
+		<table>
+			<tr>
+				<!-- Displays Ship Sizes -->
+				<td align="right">Ship Sizes:
+					<br>5</br>
+					4</br>
+					3</br>
+					3</br>
+					2</br>
+				</td>
+				<td>
+					<!-- Displays information -->
+					<h1>BattleShip</h1>
+					<font size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let's battleship. You can use the cursor to select the position</font>
+					<!--
+<table border = "1" id = "playfield">
+-->
+					<!-- Sets div to be edited later by JavaScript-->
+					<div id="play"></div>
+				</td>
+				<td>
+
+					<!-- Sets div to be edited later by JavaScript-->
+					<div id="myArray, hidden"></div>
+				</td>
+			</tr>
+		</table>
+
+		<!-- Sets div to be edited later by JavaScript-->
+		<em id="statusLabel"></em>
+
+		<!-- Sets div to be edited later by JavaScript-->
+		<div id="info" style="font-size:10px"></div>
+		<div id="RunnerPosition" style="font-size:10px"></div>
+		<!-- creates a form to send information to javascript -->
+		<form name="order" id="order">
+			<input id="xCoordinate" name="xCoordinate" title="A-J" type="text" size="2" />
+			<input id="yCoordinate" name="yCoordinate" title="1-10" size="2" />
+			<button type="button" onClick="launch();" />Launch</button>
+			<!-- Invokes JavaScript -->
+		</form>
+		<!-- displays images so they won't have lag displaying -->
+
+		<div id="hidden">
+			<img src="hit.png" alt="@" height="30" width "30">
+			<img src="blank.png" alt="@" height="30" width "30">
+			<img src="miss.png" alt="@" height="30" width "30">
+			<img src="sneaky.png" alt="@" height="30" width "30">
+		</div>
+		<script>
+// Creates variables and sets initial values
+
+var size = 11 // makes var equal 11
+tableCreate() // creates table
+var status = document.getElementById("statusLabel"); // gets element by statusLabel [references HTML]
+var wins = 0; // starts wins at 0
+var losses = 0; // starts losses at 0
+var bombedCoordinates = [
+		[0, 0]
+	] // sets bomb coordinates to 0
+var boatCoordinates = [] // sets boat coordinates as empty set 
+var lTable = document.getElementById("playfield"); // get playfield element [references HTML]
+var hits = 0; // sets hits to 0
+var misses = 0; // sets misses 0
+var moves = 0; // sets moves o
+var displayBoats = false // sets boolean var to false
+var totalBoats; // total boats variable
+var clicks = 0; // sets clicks to 0
+var myArray = MyArray2D(size, size); // makes the array and sets size
+var xIndex = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"] // list of x index coordinates
+var yIndex = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] // displays y index coordinates
+
+var hit = '<img src = "hit.png" alt = "&times;" height = "100%" width"100%">' // displays image when player hits
+var miss = '<img src = "miss.png" alt = "&frasl;" height = "100%" width"100%">' // displays image when player misses
+var blank = '<img src = "blank.png" alt = "&nbsp;" height = "100%" width"100%">' // displays blank image
+var sneaky = '<img src = "sneaky.png" alt = "%" height = "100%" width"100%">' // displays sneaky image
+
+// Creates table and sets size, padding,border, playfield
+function tableCreate() { // function to create table
+	console.log(size) // limits size of console log
+	var body = document.getElementById('play'); // takes variable body and gets element with id play [references HTML Creates table element]
+	var tbl = document.createElement('table'); // takes table variable and creates table element [references HTML Creates table element]
+	tbl.setAttribute('cellspacing', '0') // attribute sets cellspacing [references HTML Creates table element]
+	tbl.setAttribute('cellpadding', '0') // attribute sets cellpadding [references HTML Creates table element]
+	tbl.setAttribute('id', 'playfield') // attribute sets playfield [references HTML Creates table element]
+	// tbl.setAttribute('border','1'); // sets table border as 1
+	var tbdy = document.createElement('tbody'); // creates table body [references HTML Creates table element]
+	var browser = navigator.appName; // finds out Browser
+	for (var i = 0; i < size; i++) { // Loops through size of potential table
+		var tr = document.createElement('tr'); // [references HTML Creates table element]
+		tr.setAttribute("height", "35px") // sets height 35 [references HTML]
+		for (var j = 0; j < size; j++) { // Loops through size of potential table
+			var td = document.createElement('td'); // creates a table element [references HTML]
+			td.setAttribute("width", "35px") // sets width 35 [references HTML]
+			if (browser == "Microsoft Internet Explorer") { // checks to see if browser is I.E.
+				td.style.setAttribute("cssText", "cursor:crosshair;"); // if browser is I.E. sets cursor to crosshair
+			} else {
+				td.setAttribute("style", "cursor:crosshair;"); // otherwise sets cursor to crosshair
+			}
+			// td.setAttribute("style", "cursor:crosshair;");
+			tr.appendChild(td)
+		}
+		tbdy.appendChild(tr); // appends table body
+	}
+	tbl.appendChild(tbdy); // appends to table
+	body.appendChild(tbl)
+	document.getElementById('playfield').rows[0].cells[0].setAttribute('id', 'target') // gets playfield, id and target elements [references HTML] 
+
+}
+
+function addEventToCell(x, y) { // adds event to the cell
+	var foo = document.getElementById('playfield').rows[x].cells[y] // edit's field [references HTML]
+	x = xIndex[x - 1] // gets element from xIndex
+	foo.addEventListener("click", function () { // adds event listener so that a click function will work when clicking the blayfield
+		document.getElementById("xCoordinate").value = x // edits HTML forms [references HTML]
+		document.getElementById("yCoordinate").value = y // edits HTML forms [references HTML]
+		launch() // invokes launch function with provided HTML 
+	});
+}
+for (var i = 0; i < size; i++) { // adds launch function to each cell to make launch work on click
+	for (var j = 0; j < size; j++) {
+		addEventToCell(j, i)
+	}
+}
+// starts new game
+function newGame() { // new game
+	boatsList = [5, 4, 3, 3, 2] // list of boats
+
+	bombedCoordinates = [] // bomb coordinates as empty set
+	boatCoordinates = [] // boat coordinates as empty set 
+	totalBoats = 0; // sets boats at 0
+	for (var r = 0; r < boatsList.length; r++) { // places boats and gets total boats
+		placeBoat(boatsList[r])
+		totalBoats += boatsList[r]
+	}
+	displayBoard(lTable); // displays gameboard as table
+	statusUpdate(); // updates board
+	// launch(); // launches game
+}
+
+function print2DArray(array) { // creates array
+	// Sets up the coordinates for the playing board of the game
+	var string = ""
+	string += '<table 0 id = "playfield" cellpadding = "0" cellspacing = "0">' // sets cellpadding and cellspacing to 0
+	for (var y = 0; y < size; y++) { // Do something for all rows
+		string += "<tr height = \"35px\">" // sets height to 35px
+		for (var x = 0; x < size; x++) // Do something for all elements in row
+			string += "<td width = \"35px\">" + myArray[y][x] + "</td>" // sets width to 35px
+		string += "<tr>" // closes table row
+	}
+	string += "<table>" // closes table
+	return string // returns string
+}
+// FUNCTIONS
+function placeBoat(sizeOfBoat) { // places the boat
+
+	// get starting position
+	var variable = Math.round(randrange(1, (size - 1))); // sets variable at random in range
+	var constant = Math.round(randrange(1, (size - 1))); // sets variable at random in range
+	var currentPosition = []; // set variable for current position
+	var success = true // sets success to true
+	var horOrVert = Math.round(randrange(0, 1)); // set variable for horizontal or vertical
+	var boatPositions = [] // set variable for boat position
+
+	// place boat
+	for (var r = 0; r < sizeOfBoat; r++) { // for loop for boat placing
+		variable++; // increase the variable by 1
+		if (horOrVert == 1) { // if statement for if the positioning is vertical or horizontal
+			currentPosition = [variable, constant] // setting for horizontal
+		} else {
+			currentPosition = [constant, variable] // setting for vertical
+		}
+		boatPositions.push(currentPosition); // runs push function on current position
+		console.log("Boat Positions: ", boatPositions) // debugging 
+		console.log("currentPosition: ", currentPosition) // debugging
+		if (isIn(currentPosition, boatCoordinates)) { // checks if current position is in boat coordinates
+			success = false; // sets success as false
+			console.log("false"); // debugging
+		} else if (variable > (size - 1)) { // checks if variable is greater than one less than the size
+			success = false; // sets sucess as false
+			console.log("false"); // debugging		 
+		}
+
+	}
+	if (success) { // checks if success is true or false
+		for (var r = 0; r < sizeOfBoat; r++) { // for loop to push the boat position
+			boatCoordinates.push(boatPositions[r]); // pushes boat positions
+		}
+	} else {
+		placeBoat(sizeOfBoat) // places boat
+	}
+}
+
+
+function launch() { // defines launch func
+	clicks += 1; // increases clicks by 1
+	var xL = document.getElementById("xCoordinate").value; // gets x from users sets variable [edits HTML]
+	var yL = document.getElementById("yCoordinate").value; // gets y from user sets variable [edits HTML]
+	console.log("Launch Coordinates: ", xL, ",", yL) // debugging
+	xL = xL.toUpperCase(); // changes xL to and upper case
+	xL = xL.charCodeAt(0) - 64; // sets variable xL
+	yL = parseInt(yL) // parses the yL variable
+	bombCoordinte = [yL, xL] // sets bombCoordinate to the yL, xL variables
+	console.log("New Bombed Coordinate: ", bombedCoordinates); // debugging
+	console.log("Bombed Coordinates: ", bombedCoordinates); // debugging
+	bombedCoordinates.push(bombCoordinte) // pushes the bomb Coordinte
+	displayBoard(lTable); // display the table
+	statusUpdate(); // runs status update
+	gameWin(); // runes gameWin
+	return false // returns false
+}
+
+function statusUpdate() { // defines statusUpdate
+	getHits(); // runs getHits
+	status.innerHTML = "<b> Moves: " + (hits + misses) + "</b>"; // gets the element from the status label [edits HTML]
+	document.getElementById("info").innerHTML = "Hits: " + hits + "<br>Misses: " + misses; // gets the element for the chaser position [edits HTML] 
+	console.log("Boat Coordinates: ", boatCoordinates); // debugging
+	console.log("Bombed Coordinates: ", bombedCoordinates); // debugging
+}
+
+function gameWin() { // defines gameWin
+	console.log("GAMECHECK") // debugging
+	console.log(hits) // debugging
+	console.log("totalBoats", totalBoats) // debugging
+	if (hits == 17) { // checks if hits are equal to 17
+		console.log("winner") // debugging
+		wins += 1 // increases wins by 1
+		if (clicks == -1) {
+			clicks = 0
+		} // checks if clicks are equal to -1 and sets clicks to 0
+		alert("You won in " + clicks + " moves\nYou've won " + wins + " time(s)\nYou've lost " + losses + " times"); // sends alert message
+		clicks = 0; // sets clicks back to 0
+		newGame(); // runs newGame
+	}
+}
+
+// Makes a hidden click to display boats on the board.
+$("#target").click(function () { // runs .click
+	displayBoats = !displayBoats; // displayBoats is set
+	displayBoard(lTable); // displays board
+	statusUpdate(); // runs statusUpdate
+});
+
+function displayBoard(table) { // defines displayBoard
+	// Moves the players around the board in html
+	var count = 0 // sets count to 0
+	for (var y = 0; y < size; y++) { // for loop up to a size incrementing by 1
+		for (var x = 0; x < size; x++) { // for loop up to a size incrementing by 1
+			var newPosition = [x, y] // sets variable newPosition
+			if (x === 0 && y == 0) { // checks if x and y equal 0
+				table.rows[y].cells[x].innerHTML = " " // writes to the cell
+				myArray[y][x] = " " // sets myArray
+			} else if (x == 0 && y > 0) { // checks if x equals 0 and y is greater than 1
+				table.rows[y].cells[x].innerHTML = xIndex[y - 1] // writes to the cell
+				myArray[y][x] = xIndex[y - 1] // sets myArray
+			} else if (y == 0 && x > 0) { // checks if y equals 0 and x is greater than 1
+				table.rows[y].cells[x].innerHTML = yIndex[x - 1] // writes to cell
+				myArray[y][x] = yIndex[x - 1] // sets myArray
+			} else if (isIn(newPosition, boatCoordinates)) { // checks if newPosition is in boatCoordinates
+				if (isIn(newPosition, bombedCoordinates)) { // checks if new position is in bombedCoordinates
+					table.rows[y].cells[x].innerHTML = hit // writes to cell
+					myArray[y][x] = hit; // sets my Array
+				} else {
+					if (displayBoats) { // checks if boats displayed
+						table.rows[y].cells[x].innerHTML = sneaky // writes to cell
+						myArray[y][x] = sneaky // sets my array
+					} else {
+						table.rows[y].cells[x].innerHTML = blank // writes to cell
+						myArray[y][x] = blank // sets my array
+					}
+				}
+			} else if (isIn(newPosition, bombedCoordinates)) { // checks if newPosition is in bombedCoordinates
+				table.rows[y].cells[x].innerHTML = miss // writes to cell
+				myArray[y][x] = miss // sets my array
+			} else {
+				table.rows[y].cells[x].innerHTML = blank // writes to cell
+				myArray[y][x] = blank // sets my array
+			}
+		}
+	}
+}
+
+// Helper Functions
+
+function isIn(item, arr) { // Setups Function for whether the Item is in the Array
+	for (var i = 0; i <= arr.length; i++) { // Initiates for loop for each item in an Array
+		var item = item.toString() // Takes an item and turns it to a string
+		var currentItem; // Sets the variable currentItem
+		if (i >= arr.length) {
+			return false;
+		} // If item i is more than the Array length return false
+		if (typeof arr[i] == 'undefined') { // If item i is undefiend then set its value to nothing
+			currentItem = ""
+		} else {
+			currentItem = arr[i].toString(); // Otherwise item i runs the toString() function
+		}
+		if (item == currentItem) { // if item is equivalent to currentItem return true
+			return true
+		}
+	}
+}
+
+function MyArray2D(pWidth, pHeight) { // Initiates an Array for height and width
+	var lArray = new Array(pWidth); // creates a new array
+	for (var j = 0; j < pWidth; j++) { // loops through array elements 
+		lArray[j] = new Array(pHeight); // Creating a new array to create a 2d array
+	}
+	return lArray; // returns array
+}
+
+function getHits() { // Function that gets your hits misses and moves
+	hits = 0; // sets variable
+	misses = 0; // sets variable
+	moves = 0; // sets variable
+	for (var i = 0; i < size; i = i + 1) { // Nested for loop that Goes through every cell
+		for (var j = 0; j < size; j++) {
+			if (myArray[i][j] == hit) { // If your myArray is equivalent to hit then add to hits and moves
+				hits++
+				moves++
+			} else if (myArray[i][j] == miss) { // Or if your Array is equivalent to miss then add to misses and moves
+				misses++
+				moves++
+			}
+		}
+	}
+	clicks = moves // sets clicks to moves
+}
+
+function randrange(min, max) { // Math Function for a random range min,max
+	return Math.random() * (max - min) + min;
+}
+newGame() // Starts New Game
+		</script>
+	</center>
+</body>
+
+</html>

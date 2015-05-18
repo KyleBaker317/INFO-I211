@@ -1,0 +1,411 @@
+<html>
+  <head>
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<title>test.html</title>
+	<link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all" />
+	<link href="/library/skin/neo-oncourse/tool.css" type="text/css" rel="stylesheet" media="all" />
+	<style>body
+	{padding: 5px !important;}
+	#hidden {visibility:hidden}</style>
+</head>
+
+<!-- I211 Spring 2014 - Lab 13 -->
+<!-- Baker, Kyle -->
+<!-- kylbaker@indiana.edu -->
+<!-- 15 -->
+<!-- Erika Finkle, Mike Schulenburg, Gabe McHaley -->
+<style>
+input[type=submit] {
+	width: 20em;  height: 2em;
+	line-height : 27px;
+}
+</style>
+
+<html>
+<head>
+	<title>I211 : towards a Javascript game</title>
+</head>
+<body onload="addevt()" align="center">
+<center>
+<!--<div id="hLabel">H</div>
+<div id="wLabel">W</div>
+<div id="xrunnerPosition">rX</div>
+<div id="yrunnerPosition">rY</div>
+-->
+<table>
+<tr>
+<td><img src="blank.png" alt=" " height="30" width"30"> = blank </td>
+<td>
+<img src="runner.png" alt=" " height="30" width"30"> = runner</td>
+<td>
+<img src="chaser.png" alt=" " height="30" width"30"> = chaser</td>
+<tr><td>
+<img src="defeater.png" alt=" " height="30" width"30"> = defeater</td>
+<td>
+<img src="blocker.png" alt=" " height="30" width"30"> = blocker</td>
+</tr>
+<!--<table border="1" id="playfield">-->
+<table><tr><td>
+<table cellspacing="0" cellpadding="0" id="playfield">
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> </tr>
+</table>
+</td><td>
+<div id = "myArray"> </div>
+</td></tr></table>
+<em id="statusLabel">Clicks: 0.</em>
+<table>
+	<tr>
+		<td></td>
+
+		<td><input id="up" onclick="run(this.id);" type="button" value="&#8593;"></td>
+
+		<td></td>
+	</tr>
+
+	<tr>
+		<td><input id="left" onclick="run(this.id);" type="button" value="&#8592;"></td>
+
+		<td><input id="dontMove" onclick="run(this.id);" type="button" value="&#183; "></td>
+
+		<td><input id="right" onclick="run(this.id);" type="button" value="&#8594;"></td>
+	</tr>
+			<tr>
+		<td></td>
+
+		<td><input id="down" onclick="run(this.id);" type="button" value="&#8595;"></td>
+
+		<td></td>
+	</tr>
+</table>
+<div id="ChaserPosition" style="font-size:10px">></div>
+<div id="RunnerPosition" style="font-size:10px">></div>
+<input id="input" size = "24" type="text" />
+<p id="info"/> </p>
+<div id="hidden">
+<img src="chaserRight.png" alt="@" height="30" width"30">
+<img src="chaserLeft.png" alt="@" height="30" width"30">
+<img src="chaserDown.png" alt="@" height="30" width"30">
+<img src="chaserUp.png" alt="@" height="30" width"30">
+</div>
+<script>
+// Record Keys
+var Key = {
+    LEFT:   37,
+    UP:     38,
+    RIGHT:  39,
+    DOWN:   40
+  };
+
+  /* IE: attachEvent, Firefox & Chrome: addEventListener */
+  function _addEventListener(evt, element, fn) {
+    if (window.addEventListener) {element.addEventListener(evt, fn, false);}
+    else {element.attachEvent('on'+evt, fn);}
+  }
+
+  function onInputKeydown(evt) {
+    if (!evt) {evt = window.event;} // for IE compatible
+    var keycode = evt.keyCode || evt.which; // also for cross-browser compatible
+    if (keycode == Key.LEFT) {
+	run("left");}
+    else if (keycode == Key.UP) {
+	run("up");
+	document.getElementById("info").innerHTML += "up key!";}
+    else if (keycode == Key.RIGHT) {
+	run("right");
+	document.getElementById("info").innerHTML += "right key!";}
+    else if (keycode == Key.DOWN) {
+	run("down");
+	document.getElementById("info").innerHTML += "down key!";}
+    else {
+	run("dontMove");
+	document.getElementById("info").innerHTML += "key (not arrow key)!";}
+  }
+   function addevt() {
+    _addEventListener('keydown', document.getElementById("input"), onInputKeydown);
+    document.getElementById("input").value = "Click here to use Arrow Keys";
+    document.getElementById("input").focus();
+  }
+
+// End Record Keys
+
+// Creates variables and sets initial values
+var size = 10
+var status = document.getElementById("statusLabel");
+var defeaterIcon = '<img src="defeater.png" alt="!" height="30" width"30">'
+var blankIcon = '<img src="blank.png" alt=" " height="30" width"30">'
+var chaserIcon = '<img src="chaserDown.png" alt="#" height="30" width"30">'
+var runnerIcon = '<img src="runner.png" alt="@" height="30" width"30">'
+var blockerIcon = '<img src="blocker.png" alt="@" height="30" width"30">'
+var wins = 0;
+var losses = 0;
+
+var lTable = document.getElementById("playfield");
+var lTableHeight = lTable.rows.length;
+var lTableWidth = lTable.rows[2].cells.length;
+
+var xChaserPosition = Math.round(randrange(0,(size - 1)));
+var yChaserPosition = Math.round(randrange(0,(size - 1)));
+
+var yRunnerPosition = Math.round(randrange(0,(size - 1)));
+var xRunnerPosition = Math.round(randrange(0,(size - 1)));
+
+var xDefeaterPosition = Math.round(randrange(0,(size - 1)));
+var yDefeaterPosition = Math.round(randrange(0,(size - 1)));
+
+var xBlocker1Position = Math.round(randrange(0,(size - 1)));
+var yBlocker1Position = Math.round(randrange(0,(size - 1)));
+
+var blockers = [[4,5]]
+
+function newGame(){
+    xChaserPosition = Math.round(randrange(0,(size - 1)));
+	yChaserPosition = Math.round(randrange(0,(size - 1)));
+
+	yRunnerPosition = Math.round(randrange(0,(size - 1)));
+	xRunnerPosition = Math.round(randrange(0,(size - 1)));
+
+	xDefeaterPosition = Math.round(randrange(0,(size - 1)));
+	yDefeaterPosition = Math.round(randrange(0,(size - 1)));
+
+	xBlocker1Position = Math.round(randrange(0,(size - 1)));
+	yBlocker1Position = Math.round(randrange(0,(size - 1)));
+
+}
+
+var clicks = -1;
+var myArray = MyArray2D(size, size);
+for (var i=0; i < size; i = i+1) {
+	for (var j = 0; j < size; j++) {
+		myArray[i][j]= i*j;
+	}
+}
+function print2DArray(array){
+	var string = ""
+	string += '<table border = black 0 id="playfield">'
+	for (var y=0; y < size; y = y+1){
+		// Do something for all rows
+		string += "<tr height=\"15px\">"
+		for (var x=0; x < size; x = x+1)
+		string +="<td width=\"15px\">"+myArray[y][x]+"</td>"
+			//Do something for all elements in row
+		string += "<tr>"
+	}
+	string += "<table>"
+	return string
+}
+// document.write(print2DArray(myArray))
+//document.write(myArray.toString());
+
+//FUNCTIONS
+function MyArray2D (pWidth, pHeight) {
+  var lArray = new Array(pWidth);
+  for (var j=0; j < pWidth; j++) {
+	 lArray[j] = new Array(pHeight);
+  }
+  return lArray;
+}
+function getBlockers(numberOfBlockers){
+	for (var n = 0; n < numberOfBlockers; n++){
+		var x = Math.round(randrange(0,(size - 1)));
+		var y = Math.round(randrange(0,(size - 1)));
+		blockers.push([x,y]);
+	}
+	console.log(blockers);
+}
+getBlockers(10);
+
+function nextPosition(){
+	var next = Math.round(randrange(-1,1));
+	console.log("next:",next);
+	return next;
+}
+nextPosition();
+function run(variable) {
+	if (variable == "up"){
+		chaserIcon = '<img src="chaserUp.png" alt="@" height="30" width"30">'
+
+		if (yChaserPosition == 0) {
+		}
+		else if (yChaserPosition - 1 == yBlocker1Position && xBlocker1Position == xChaserPosition){
+			yChaserPosition = yChaserPosition
+		}
+		else {
+			yChaserPosition -= 1
+		}
+	}
+
+	else if (variable == "down"){
+		chaserIcon = '<img src="chaserDown.png" alt="@" height="30" width"30">'
+
+		if (yChaserPosition == (size - 1)) {
+			yChaserPosition = (size - 1)
+			}
+		else if (yChaserPosition + 1 == yBlocker1Position && xBlocker1Position == xChaserPosition){
+			yChaserPosition = yChaserPosition
+			}
+			else {
+				yChaserPosition += 1
+			}
+	}
+	else if (variable == "left"){
+		chaserIcon = '<img src="chaserLeft.png" alt="@" height="30" width"30">'
+
+		if (xChaserPosition === 0) {
+		xChaserPosition = 0
+		}
+		else if (xChaserPosition - 1 == xBlocker1Position && yBlocker1Position == yChaserPosition){
+			xChaserPosition = xChaserPosition
+		}
+		else {
+			xChaserPosition -= 1
+		}
+	}
+	else if (variable == "right"){
+		chaserIcon = '<img src="chaserRight.png" alt="@" height="30" width"30">'
+		if (xChaserPosition == size - 1) {
+			xChaserPosition = (size - 1)
+		}
+		else if (xChaserPosition + 1 == xBlocker1Position && yBlocker1Position == yChaserPosition){
+			xChaserPosition = xChaserPosition
+		}
+		else {
+			xChaserPosition += 1
+		}
+	}
+	else if (variable == "dontMove")
+	{
+	}
+
+	getAIPosition()
+	moveCharacters();
+	gameWin();
+	statusUpdate();
+} //end run function
+function statusUpdate(){
+	// Updates the Status information
+	//sets myClicks to the element of statusLabel
+	var statusLabel = document.getElementById('statusLabel')
+	statusLabel.innerHTML= "<b> Clicks: "+clicks+"</b>";
+	document.getElementById("ChaserPosition").innerHTML = "Chaser Position: ("+ xChaserPosition + "," + yChaserPosition + ")";
+	document.getElementById("RunnerPosition").innerHTML = "Runner Position: ("+ xRunnerPosition + "," + yRunnerPosition + ")";
+	document.getElementById("myArray").innerHTML = print2DArray(myArray)
+	document.getElementById("input").focus();
+	}
+
+function randrange(min, max) {
+    return Math.random() * (max - min) + min;
+}
+function moveCharacters(){
+	// Moves the players around the board in html
+	for (var y=0; y < size; y = y + 1) { // i is y || j is x
+		for (var x = 0; x < size; x++) {
+				if (x == xChaserPosition && y == yChaserPosition){
+						lTable.rows[y].cells[x].innerHTML = chaserIcon
+						myArray[y][x] = "@"
+				}
+				else if (x == xRunnerPosition && y == yRunnerPosition){
+						lTable.rows[y].cells[x].innerHTML = runnerIcon
+						myArray[y][x] = "#"
+				}
+				else if (x == xDefeaterPosition && y == yDefeaterPosition){
+						lTable.rows[y].cells[x].innerHTML = defeaterIcon
+						myArray[y][x] = "!"
+				}
+				else if (x == xBlocker1Position && y == yBlocker1Position) {
+						lTable.rows[y].cells[x].innerHTML = blockerIcon
+						myArray[y][x] = "%"
+				}
+			else {
+				lTable.rows[y].cells[x].innerHTML = blankIcon
+				myArray[y][x] = "&nbsp;"
+			}
+		}
+	}
+	console.log("Chaser x:",xChaserPosition);
+	console.log("Chaser y:",yChaserPosition);
+	console.log("Runner x:",xRunnerPosition);
+	console.log("Runner y:",yRunnerPosition);
+	clicks += 1;
+	}
+
+function gameWin(){
+    // Alerts user to a winning Game.
+    // Possibility: create new game positions.
+    // If chaser catches runner
+	if ((xChaserPosition == xRunnerPosition && yChaserPosition == yRunnerPosition) || (xDefeaterPosition == xRunnerPosition && yDefeaterPosition == yRunnerPosition)){
+		wins +=1
+		if (clicks == -1){clicks = 0}
+		alert("Boom Roasted.\nit took "+clicks +" moves\nYou've won " +wins +" time(s)\nYou've lost " +losses+" times");
+		clicks = 0
+		newGame()
+	}
+	// If defeater catches chaser
+	if (xChaserPosition == xDefeaterPosition && yChaserPosition == yDefeaterPosition){
+		losses +=1
+		alert("Boom Roasted.\nYou lost in "+clicks +" moves\nYou've won " +wins +" time(s)\nYou've lost " +losses+" time(s)");
+		clicks = 0
+		newGame()
+	}
+
+}
+function getAIPosition(){
+	// Gets runner's next position
+	var TrueOrFalse = Math.round(randrange(0,1))
+	if (TrueOrFalse == 1) {
+		xRunnerPosition += nextPosition()
+		if (xRunnerPosition > (size - 1)){
+			xRunnerPosition = (size - 1)
+		}
+		if (xRunnerPosition < 0){
+			xRunnerPosition = 0
+		}
+	}
+	else {
+		yRunnerPosition += nextPosition()
+		if (yRunnerPosition > (size - 1)){
+			yRunnerPosition = (size - 1)
+		}
+		if (yRunnerPosition < 0){
+			yRunnerPosition = 0
+		}
+	}
+	
+	// Gets Defeater's next position
+	TrueOrFalse = Math.round(randrange(0,1))
+	if (TrueOrFalse == 1) {
+		xDefeaterPosition += nextPosition()
+		if (xDefeaterPosition > (size - 1)){
+			xDefeaterPosition = (size - 1)
+		}
+		if (xDefeaterPosition < 0){
+			xDefeaterPosition = 0
+		}
+	}
+	else {
+		yDefeaterPosition += nextPosition()
+		if (yDefeaterPosition > (size - 1)){
+			yDefeaterPosition = (size - 1)
+		}
+		if (yDefeaterPosition < 0){
+			yDefeaterPosition = 0
+		}
+	}
+}
+
+run("");
+</script>
+</body>
+</html>
+</center>
+  </body>
+</html>
+

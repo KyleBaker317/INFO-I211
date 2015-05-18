@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<!-- I211 Spring 2014 - Lab 13 -->
+<!-- Baker, Kyle -->
+<!-- kylbaker@indiana.edu -->
+<!-- 15 -->
+<!-- Erika Finkle, Mike Schulenburg, Gabe McHaley -->
+<html>
+<head>
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<style>
+	body{
+		padding: 5px !important;
+	}
+	#hidden{
+		visibility:hidden
+	}
+	td{
+		text-align: center
+	}
+	input[type=submit] {
+		width: 20em;
+		height: 2em;
+		line-height : 27px;
+	}
+	</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<title>BattleShip</title>
+</head>
+<body align="center">
+<center>
+<!--<div id="hLabel">H</div>
+<div id="wLabel">W</div>
+<div id="xBoatPosition">rX</div>
+<div id="yBoatPosition">rY</div>
+-->
+
+<!--
+<table border="1" id="playfield">
+-->
+<table><tr>
+<td align="right">Ship Sizes:<br>
+5 </br>
+4 </br>
+3</br>
+3</br>
+2</br>	
+</td>
+<td>
+<h1>BattleShip</h1>
+<font size="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Let's battleship. You can use the cursor to select the position</font>
+<!--
+<table border="1" id="playfield">
+-->
+<div id="play"></div>
+</td><td>
+<div id = "myArray, hidden"> </div>
+</td></tr></table>
+<em id="statusLabel"></em>
+
+<div id="ChaserPosition" style="font-size:10px"></div>
+<div id="RunnerPosition" style="font-size:10px"></div>
+<div id="LaunchCodes" style="font-size:10px"></div>
+<form name="order" id="order">
+<input id="xCoordinate" name="xCoordinate" title="A-J" type="text" size="2" />
+<input id="yCoordinate" name="yCoordinate" title="1-10" size = "2" />
+<button type="button" onClick="launch();"/>Launch</button>
+</form>
+<div id="hidden">
+<img src="hit.png" alt="@" height="30" width"30">
+<img src="blank.png" alt="@" height="30" width"30">
+<img src="miss.png" alt="@" height="30" width"30">
+<img src="sneaky.png" alt="@" height="30" width"30">
+</div>
+<script>
+// Erika's Part
+// Creates variables and sets initial values
+var size = 11
+tableCreate()
+var status = document.getElementById("statusLabel");
+var LaunchCodes = document.getElementById("LaunchCodes");
+var wins = 0;
+var losses = 0;
+var bombedCoordinates = [[0,0]]
+var boatCoordinates = []
+var lTable = document.getElementById("playfield");
+var hits = 0;
+var misses = 0;
+var moves = 0;
+var displayBoats = false
+var totalBoats;
+var clicks = 0;
+var myArray = MyArray2D(size, size);
+var xIndex = ["A","B","C","D","E","F","G","H","I","J"]
+var yIndex = [1,2,3,4,5,6,7,8,9,10]
+
+var hit = "&times;"
+var miss = "&frasl;"
+var blank = "&nbsp;"
+
+var hit = '<img src="hit.png" alt="&times;" height="100%" width"100%">'
+var miss = '<img src="miss.png" alt="&frasl;" height="100%" width"100%">'
+var blank = '<img src="blank.png" alt="&nbsp;" height="100%" width"100%">'
+var sneaky = '<img src="sneaky.png" alt="%" height="100%" width"100%">'
+
+function tableCreate(){
+	// var size = 11;
+	console.log(size)
+	var body=document.getElementById('play');
+	var tbl=document.createElement('table');
+	tbl.setAttribute('cellspacing','0')
+	tbl.setAttribute('cellpadding','0')
+	tbl.setAttribute('id','playfield')
+	//tbl.setAttribute('border','1');
+	var tbdy=document.createElement('tbody');
+	var browser=navigator.appName;
+	for(var i=0;i<size;i++){
+			var tr=document.createElement('tr');
+			tr.setAttribute("height","35px")
+			for(var j=0;j<size;j++){
+					var td=document.createElement('td');
+					td.setAttribute("width","35px")
+					if (browser == "Microsoft Internet Explorer"){            
+						td.style.setAttribute("cssText", "cursor:crosshair;");
+					}
+					else{ 
+						td.setAttribute("style", "cursor:crosshair;");
+					}
+					td.setAttribute("style", "cursor:crosshair;");
+					tr.appendChild(td)
+					}
+			tbdy.appendChild(tr);
+	}
+	tbl.appendChild(tbdy);
+	body.appendChild(tbl)
+	// document.getElementById('playfield').rows[0].cells[0].style.backgroundColor = "#003366";
+	document.getElementById('playfield').rows[0].cells[0].setAttribute('id','target') 
+	
+}
+function addEventToCell(x,y){
+	var foo = document.getElementById('playfield').rows[x].cells[y]
+	x = xIndex[x-1]
+	foo.addEventListener("click", function() {
+		document.getElementById("xCoordinate").value = x
+		document.getElementById("yCoordinate").value = y
+		launch()
+	});
+}
+for(var i=0;i<size;i++){
+	for(var j=0;j<size;j++){
+		addEventToCell(j,i)
+	}
+}
+function newGame(){
+	boatsList = [5,4,3,3,2]
+	
+	bombedCoordinates = []
+	boatCoordinates = []	
+	totalBoats = 0;
+	for (var r = 0; r < boatsList.length; r++){
+			placeBoat(boatsList[r])
+			totalBoats += boatsList[r]
+	}
+	displayBoard(lTable);
+	statusUpdate();
+	//launch();
+}
+
+function print2DArray(array){
+	var string = ""
+	string += '<table 0 id="playfield" cellpadding="0" cellspacing="0">'
+	for (var y=0; y < size; y = y+1){
+		// Do something for all rows
+		string += "<tr height=\"35px\">"
+		for (var x=0; x < size; x = x+1)
+		string +="<td width=\"35px\">"+myArray[y][x]+"</td>"
+			//Do something for all elements in row
+		string += "<tr>"
+	}
+	string += "<table>"
+	return string
+}
+//FUNCTIONS
+// End Erika's Part
+// Start Gabe's Part
+function placeBoat(sizeOfBoat){
+	
+	// get starting position
+	var variable = Math.round(randrange(1,(size - 1)));
+	var constant = Math.round(randrange(1,(size - 1)));
+	var currentPosition = [];
+	var success = true
+	var horOrVert = Math.round(randrange(0,1));
+	var boatPositions = []
+	
+	// place boat
+	for (var r = 0; r < sizeOfBoat; r++){
+		variable++;
+		if (horOrVert == 1){
+			currentPosition = [variable, constant]
+		}
+		else{
+			currentPosition = [constant, variable]
+		}
+		boatPositions.push(currentPosition);
+		console.log("Boat Positions: ",boatPositions)
+		console.log("currentPosition: ",currentPosition)
+		if (isIn(currentPosition,boatCoordinates)){
+			success = false;
+			console.log("false");
+		}
+		else if (variable > (size - 1)){
+			success = false;
+			console.log("false");			
+		}
+		
+	}
+	if (success){
+		for (var r = 0; r < sizeOfBoat; r++){
+			boatCoordinates.push(boatPositions[r]);
+		}
+	}
+	else {
+		placeBoat(sizeOfBoat)
+	}
+}
+
+
+function launch() {
+	clicks += 1;
+	var xL = document.getElementById("xCoordinate").value;
+	var yL = document.getElementById("yCoordinate").value;
+	console.log("Launch Coordinates: ",xL,",",yL)
+	xL = xL.toUpperCase();
+	xL = xL.charCodeAt(0) - 64;
+	yL = parseInt(yL)
+	bombCoordinte = [yL, xL]
+	console.log("New Bombed Coordinate: ", bombedCoordinates);
+	console.log("Bombed Coordinates: ", bombedCoordinates);
+	bombedCoordinates.push(bombCoordinte)
+	displayBoard(lTable);	
+	statusUpdate();
+	gameWin();
+	return false
+}
+
+function statusUpdate(){
+	getHits();
+	document.getElementById('statusLabel').innerHTML= "<b> Moves: "+(hits+misses)+"</b>";
+	document.getElementById("ChaserPosition").innerHTML = "Hits: "+hits+"<br>Misses: "+misses;
+	//document.getElementById("myArray").innerHTML = print2DArray(myArray);
+	console.log("Boat Coordinates: ", boatCoordinates);
+	console.log("Bombed Coordinates: ", bombedCoordinates);
+}
+
+function gameWin(){
+	console.log("GAMECHECK")
+	console.log(hits)
+	console.log("totalBoats",totalBoats)
+	if (hits == 17){
+		console.log("winner")
+		wins +=1
+		if (clicks == -1){clicks = 0}
+		alert("You won in "+clicks +" moves\nYou've won " +wins +" time(s)\nYou've lost " +losses+" times");
+		clicks = 0;
+		newGame();
+	}
+}
+
+// Makes a hidden click to display boats on the board.
+$( "#target" ).click(function(){
+	displayBoats = !displayBoats;
+	displayBoard(lTable);
+	statusUpdate();
+});
+
+function displayBoard(table){
+	// Moves the players around the board in html
+	var count = 0
+	for (var y=0; y < size; y++) {
+		for (var x = 0; x < size; x++) {
+			var newPosition = [x,y]
+			if (x===0 && y ==0){
+				table.rows[y].cells[x].innerHTML = " "
+				myArray[y][x] = " "
+			}
+			else if (x == 0 && y > 0){
+					table.rows[y].cells[x].innerHTML = xIndex[y-1]
+					myArray[y][x] = xIndex[y-1]
+			}
+			else if (y == 0 && x > 0){
+					table.rows[y].cells[x].innerHTML = yIndex[x-1]
+					myArray[y][x] = yIndex[x-1]
+			}
+			else if (isIn(newPosition, boatCoordinates)){ 
+				if (isIn(newPosition, bombedCoordinates)){
+					table.rows[y].cells[x].innerHTML = hit
+					myArray[y][x] = hit;
+				}
+				else{
+					if (displayBoats){
+						table.rows[y].cells[x].innerHTML = sneaky
+						myArray[y][x] = sneaky
+					}
+					else{
+						table.rows[y].cells[x].innerHTML = blank
+						myArray[y][x] = blank
+					}
+				}
+			}
+			else if (isIn(newPosition, bombedCoordinates)) {
+					table.rows[y].cells[x].innerHTML = miss
+					myArray[y][x] = miss
+			}
+			else {
+				table.rows[y].cells[x].innerHTML = blank
+				myArray[y][x] = blank
+			}
+		}
+	}
+}
+// End Gabe's Part
+// Start Mike's Part
+
+// Helper Functions
+
+function isIn(item,arr) {
+	for (var i = 0; i <= arr.length; i++) {
+		var item = item.toString()
+		var currentItem; 
+		if (i >= arr.length) {return false;}
+		if (typeof arr[i] === 'undefined'){
+			currentItem = ""
+		}
+		else {
+			currentItem = arr[i].toString();
+		}
+		if (item == currentItem){
+			return true
+		}
+	}
+}
+
+function MyArray2D (pWidth, pHeight) {
+	var lArray = new Array(pWidth);
+	for (var j=0; j < pWidth; j++) {
+		lArray[j] = new Array(pHeight);
+	}
+	return lArray;
+}
+
+for (var i=0; i < size; i = i+1){
+	for (var j = 0; j < size; j++){
+		myArray[i][j]= i*j;
+	}
+}
+
+function getHits(){
+	hits = 0;
+	misses = 0;
+	moves = 0;
+	for (var i=0; i < size; i = i+1) {
+		for (var j = 0; j < size; j++) {
+			if (myArray[i][j] == hit){
+			hits++
+			moves++
+			}
+		else if (myArray[i][j] == miss){
+			misses++
+			moves++
+			}	
+		}
+	}
+	clicks = moves
+}
+
+function randrange(min, max) {
+	return Math.random() * (max - min) + min;
+}
+newGame()
+// End Mike's Part
+			</script>
+		</center>
+	</body>
+</html>

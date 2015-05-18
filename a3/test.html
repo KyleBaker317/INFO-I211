@@ -1,0 +1,32 @@
+<html>
+<body>
+<div id="play">
+</div></body>
+<script>
+function tableCreate(){
+	var size = 11;
+	var body=document.getElementById('play');
+	var tbl=document.createElement('table');
+	tbl.setAttribute('cellspacing','0')
+	tbl.setAttribute('cellpadding','')
+	tbl.setAttribute('id','playfield')
+	tbl.setAttribute('border','1');
+	var tbdy=document.createElement('tbody');
+	for(var i=0;i<size;i++){
+			var tr=document.createElement('tr');
+			tr.setAttribute("height","30px")
+			for(var j=0;j<size;j++){
+					var td=document.createElement('td');
+					td.setAttribute("width","30px")
+					tr.appendChild(td)
+					}
+			tbdy.appendChild(tr);
+	}
+	tbl.appendChild(tbdy);
+	body.appendChild(tbl)
+	document.getElementById('playfield').rows[0].cells[0].style.backgroundColor = "#003366";
+	document.getElementById('playfield').rows[0].cells[0].setAttribute('id','target') 
+}
+tableCreate()
+</script>
+</html>

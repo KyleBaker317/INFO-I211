@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<!-- I211 Spring 2014 - Lab 13 -->
+<!-- Baker, Kyle -->
+<!-- kylbaker@indiana.edu -->
+<!-- 15 -->
+<!-- Erika Finkle, Mike Schulenburg, Gabe McHaley -->
+<html>
+<head>
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<style>
+	body{
+		padding: 5px !important;
+	}
+	#hidden{
+		visibility:hidden
+	}
+	td{
+		text-align: center
+	}
+	input[type=submit] {
+		width: 20em;
+		height: 2em;
+		line-height : 27px;
+	}
+	</style>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<title>BattleShip</title>
+</head>
+<body align="center">
+<center>
+<!--<div id="hLabel">H</div>
+<div id="wLabel">W</div>
+<div id="xBoatPosition">rX</div>
+<div id="yBoatPosition">rY</div>
+-->
+
+<!--
+<table border="1" id="playfield">
+-->
+<h1>BattleShip</h1>
+<table><tr>
+<td align="right">5 ships</br>
+5: XXXXX</br>
+4: XXXX</br>
+3: XXX</br>
+3: XXX</br>
+2: XX</br>	
+</td>
+
+<td>
+<!--
+<table border="1" id="playfield">
+-->
+
+<table border = "1" cellspacing="0" cellpadding="0" id="playfield">
+	<tr height="30"> <td width="30" id="target"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td></tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> </tr>
+	<tr height="30"> <td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> <td width="30"></td><td width="30"></td> </tr>
+	</table>
+</td><td>
+<div id = "myArray, hidden"> </div>
+</td></tr></table>
+<em id="statusLabel"></em>
+
+<div id="ChaserPosition" style="font-size:10px"></div>
+<div id="RunnerPosition" style="font-size:10px"></div>
+<div id="LaunchCodes" style="font-size:10px"></div>
+<form name="order" id="order">
+<input id="xCoordinate" name="xCoordinate" title="A-I" type="text" size="2" />
+<input id="yCoordinate" name="yCoordinate" title="1-9" size = "2" />
+
+<button type="button" onClick="launch();"/>Launch</button>
+</form>
+
+<script>
+// End Record Keys
+
+// Creates variables and sets initial values
+var size = 11
+var status = document.getElementById("statusLabel");
+var LaunchCodes = document.getElementById("LaunchCodes");
+var wins = 0;
+var losses = 0;
+var bombedCoordinates = [[0,0]]
+var boatCoordinates = []
+var lTable = document.getElementById("playfield");
+var lTableHeight = lTable.rows.length;
+var lTableWidth = lTable.rows[2].cells.length;
+var hits = 0;
+var xBomberPosition = 0;
+var yBomberPosition = 0;
+var displayBoats = false
+var yBoatPosition = Math.round(randrange(1,(size - 1)));
+var xBoatPosition = Math.round(randrange(1,(size - 1)));
+var totalBoats = 0;
+var clicks = 0;
+var myArray = MyArray2D(size, size);
+
+function newGame(){
+	boatsList = [5,4,3,3,2]
+	bombedCoordinates = []
+	boatCoordinates = []	
+	totalBoats = 0;
+	for (var r = 0; r < boatsList.length; r++){
+			placeBoat(boatsList[r])
+			totalBoats += boatsList[r]
+	}
+	displayBoard();
+	statusUpdate();
+	//launch();
+}
+
+function print2DArray(array){
+	var string = ""
+	string += '<table border = "1" cellspacing="0" cellpadding="0" id="playfield">'
+	for (var y=0; y < size; y = y+1){
+		// Do something for all rows
+		string += "<tr height=\"15px\">"
+		for (var x=0; x < size; x = x+1)
+		string +="<td width=\"15px\">"+myArray[y][x]+"</td>"
+			//Do something for all elements in row
+		string += "<tr>"
+	}
+	string += "<table>"
+	return string
+}
+//FUNCTIONS
+
+/*
+Type of ship	Size
+aircraftcarrier	5
+battleship		4
+submarine		3
+destroyer		 3
+patrol boat	 2
+*/
+function placeBoat(sizeOfBoat){
+	
+	// get starting position
+	var variable = Math.round(randrange(1,(size - 1)));
+	var constant = Math.round(randrange(1,(size - 1)));
+	var currentPosition = [];
+	var success = true
+	var horOrVert = Math.round(randrange(0,1));
+	var boatPositions = []
+	
+	// get direction
+	
+	// place boat
+	for (var r = 0; r < sizeOfBoat; r++){
+		variable++;
+		if (horOrVert == 1){
+			currentPosition = [variable, constant]
+		}
+		else{
+			currentPosition = [constant, variable]
+		}
+		boatPositions.push(currentPosition);
+		console.log("Boat Positions: ",boatPositions)
+		console.log("currentPosition: ",currentPosition)
+		if (isIn(currentPosition,boatCoordinates)){
+			success = false;
+			console.log("false");
+		}
+		else if (variable > (size - 1)){
+			success = false;
+			console.log("false");			
+		}
+		
+	}
+	if (success){
+		for (var r = 0; r < sizeOfBoat; r++){
+			boatCoordinates.push(boatPositions[r]);
+		}
+	}
+	else {
+		placeBoat(sizeOfBoat)
+	}
+}
+
+
+function launch() {
+	clicks += 1;
+	var xL = document.getElementById("xCoordinate").value;
+	var yL = document.getElementById("yCoordinate").value;
+	console.log("Launch Coordinates: ",xL,",",yL)
+	xL = xL.toUpperCase();
+	xL = xL.charCodeAt(0) - 64;
+	yL = parseInt(yL)
+	bombCoordinte = [yL, xL]
+	console.log("New Bombed Coordinate: ", bombedCoordinates);
+	console.log("Bombed Coordinates: ", bombedCoordinates);
+	bombedCoordinates.push(bombCoordinte)
+	displayBoard();
+	statusUpdate();
+	gameWin();
+	return false
+}
+
+function statusUpdate(){
+	getHits();
+	document.getElementById('statusLabel').innerHTML= "<b> Clicks: "+clicks+"</b>";
+	document.getElementById("ChaserPosition").innerHTML = "Hits: "+hits+"<br>Misses: "+(clicks - hits);
+	document.getElementById("myArray").innerHTML = print2DArray(myArray);
+	console.log("Bomber x:",xBomberPosition);
+	console.log("Bomber y:",yBomberPosition);
+	console.log("Boat x:",xBoatPosition);
+	console.log("Boat y:",yBoatPosition);
+	console.log("Boat Coordinates: ", boatCoordinates);
+	console.log("Bombed Coordinates: ", bombedCoordinates);	
+}
+
+function gameWin(){
+	var win = false
+	if (hits == totalBoats){
+		console.log("winner")
+		wins +=1
+		if (clicks == -1){clicks = 0}
+		alert("Boom Roasted.\nit took "+clicks +" moves\nYou've won " +wins +" time(s)\nYou've lost " +losses+" times");
+		clicks = 0;
+		newGame();
+	}
+}
+
+$( "#target" ).click(function() {
+	displayBoats = !displayBoats;
+	displayBoard();
+	statusUpdate();
+});
+
+function displayBoard(){
+	// Moves the players around the board in html
+	var xIndex = ["A","B","C","D","E","F","G","H","I","j"]
+	var yIndex = [1,2,3,4,5,6,7,8,9,10]
+	var count = 0
+	for (var y=0; y < size; y++) {
+		for (var x = 0; x < size; x++) {
+			var newPosition = [x,y]
+			if (x == 0 && y > 0){
+					lTable.rows[y].cells[x].innerHTML = xIndex[y-1]
+					myArray[y][x] = xIndex[y-1-1]
+			}
+			else if (y == 0 && x > 0){
+					lTable.rows[y].cells[x].innerHTML = yIndex[x-1]
+					myArray[y][x] = yIndex[x-1]
+			}
+			else if (isIn(newPosition, bombedCoordinates) && isIn(newPosition, boatCoordinates)) {
+					lTable.rows[y].cells[x].innerHTML = "&times;"
+					myArray[y][x] = "&times;";
+			}
+			else if (isIn(newPosition, boatCoordinates)) {
+					if (displayBoats){
+						lTable.rows[y].cells[x].innerHTML = "%"
+						myArray[y][x] = "%"
+					}
+					else{
+						lTable.rows[y].cells[x].innerHTML = "&nbsp;"
+						myArray[y][x] = "&nbsp;"
+					}
+			}
+			else if (isIn(newPosition, bombedCoordinates)) {
+					lTable.rows[y].cells[x].innerHTML = "&frasl;"
+					myArray[y][x] = "&frasl;"
+			}
+			else {
+				lTable.rows[y].cells[x].innerHTML = "&nbsp;"
+				myArray[y][x] = "&nbsp;"
+			}
+		}
+	}
+}
+	
+// Helper Functions
+function isIn(item,arr) { 
+	for (var i = 0; i <= arr.length; i++) {
+		var item = item.toString()
+		var currentItem; 
+		if (i >= arr.length) {return false;} 
+		if (typeof arr[i] === 'undefined'){
+			currentItem = ""
+		}
+		else {
+			currentItem = arr[i].toString();
+		}
+		if (item == currentItem){
+			return true
+		}		
+	}
+}
+
+function MyArray2D (pWidth, pHeight) {
+	var lArray = new Array(pWidth);
+	for (var j=0; j < pWidth; j++) {
+		lArray[j] = new Array(pHeight);
+	}
+	return lArray;
+}
+
+for (var i=0; i < size; i = i+1) {
+	for (var j = 0; j < size; j++) {
+		myArray[i][j]= i*j;
+	}
+}
+
+function getHits(){
+	hits = 0;
+	for (var i=0; i < size; i = i+1) {
+		for (var j = 0; j < size; j++) {
+			if (myArray[i][j] == "&times;"){
+			hits++
+			};
+		}
+	}
+}
+
+function randrange(min, max) {
+	return Math.random() * (max - min) + min;
+}
+newGame()
+			</script>
+		</center>
+	</body>
+</html>
+

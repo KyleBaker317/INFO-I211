@@ -1,0 +1,201 @@
+<html>
+  <head>
+	<meta http-equiv="Content-Style-Type" content="text/css" />
+	<title>Get Blockers</title>
+	<link href="/library/skin/tool_base.css" type="text/css" rel="stylesheet" media="all" />
+	<link href="/library/skin/neo-oncourse/tool.css" type="text/css" rel="stylesheet" media="all" />
+	<style>body
+	{padding: 5px !important;}
+	#hidden {visibility:hidden}</style>
+</head>
+
+<!-- I211 Spring 2014 - Lab 13 -->
+<!-- Baker, Kyle -->
+<!-- kylbaker@indiana.edu -->
+<!-- 15 -->
+<!-- Erika Finkle, Mike Schulenburg, Gabe McHaley -->
+<style>
+input[type=submit] {
+	width: 20em;  height: 2em;
+	line-height : 27px;
+}
+</style>
+
+<html>
+<head>
+	<title>I211 : towards a Javascript game</title>
+</head>
+<body>
+<div id = "test"> </div>
+<script>
+var size = 10
+var xChaserPosition = Math.round(randrange(0,(size - 1)));
+var yChaserPosition = Math.round(randrange(0,(size - 1)));
+
+var yRunnerPosition = Math.round(randrange(0,(size - 1)));
+var xRunnerPosition = Math.round(randrange(0,(size - 1)));
+
+var xDefeaterPosition = Math.round(randrange(0,(size - 1)));
+var yDefeaterPosition = Math.round(randrange(0,(size - 1)));
+
+var xBlocker1Position = Math.round(randrange(0,(size - 1)));
+var yBlocker1Position = Math.round(randrange(0,(size - 1)));
+
+var xBlocker2Position = Math.round(randrange(0,(size - 1)));
+var yBlocker2Position = Math.round(randrange(0,(size - 1)));
+
+var xBlocker3Position = Math.round(randrange(0,(size - 1)));
+var yBlocker3Position = Math.round(randrange(0,(size - 1)));
+
+var blockers = [[5,0]]
+getBlockers(10);
+function nextPosition(){
+	var next = Math.round(randrange(-1,1));
+	console.log("next:",next);
+	return next;
+}
+function addToList(item, list, len){
+	if (list.length == len){
+		list.shift()
+		list.push(item)	
+	}
+	else list.push(item)
+}
+var test = [1,2,3,4,5,6,7,8,9,10]
+console.log("Test: ", test)
+addToList(11,test,11)
+console.log("Test: ", test)
+function getRunnerPosition(x,y){
+	/*
+	1 = up;
+	2 = down;
+	3 = left;
+	4 = right;
+	5 = dontMove
+	*/
+	// Gets runner's next position
+	var newRunnerPosition = []
+	var moves = ["up", "down", "left", "right", "dontmove"]
+	//console.log("Moves", moves)
+	var n = moves[Math.round(randrange(0,4))]
+	//console.log("Next Move: ",n)
+	if (n == "up"){
+		newRunnerPosition = [xRunnerPosition, yRunnerPosition - 1]
+		runnerIcon = '<img src="runnerUp.png" alt="@" height="30" width"30">'
+	}
+	else if (n == "down"){
+		newRunnerPosition = [xRunnerPosition, yRunnerPosition + 1]
+		runnerIcon = '<img src="runnerDown.png" alt="@" height="30" width"30">'
+	}
+	else if (n == "left"){
+		newRunnerPosition = [xRunnerPosition - 1, yRunnerPosition]
+		runnerIcon = '<img src="runnerLeft.png" alt="@" height="30" width"30">'
+	}
+	else if (n == "right"){
+		newRunnerPosition = [xRunnerPosition + 1, yRunnerPosition]
+		runnerIcon = '<img src="runnerRight.png" alt="@" height="30" width"30">'
+	}
+	else{ // Don't move
+		newRunnerPosition = [xRunnerPosition, yRunnerPosition]
+	
+	}
+	if ((newRunnerPosition[0] == -1) || (newRunnerPosition[0] == size) ||(newRunnerPosition[1] == -1) || (newRunnerPosition[1] == size) || isIn(newRunnerPosition,blockers)){
+		getRunnerPosition(xRunnerPosition,yRunnerPosition)
+	}
+	else {
+		xRunnerPosition = newRunnerPosition[0]	
+		yRunnerPosition = newRunnerPosition[1]
+	}
+
+	console.log("New Runner Position: [", xRunnerPosition,",", yRunnerPosition,"]")
+}
+function getDefeaterPosition(){
+	/*
+	1 = up;
+	2 = down;
+	3 = left;
+	4 = right;
+	5 = dontMove
+	*/
+	// Gets defeater's next position
+	var newDefeaterPosition = []
+	var moves = ["up", "down", "left", "right", "dontmove"]
+	//console.log("Moves", moves)
+	var n = moves[Math.round(randrange(0,4))]
+	//console.log("Next Move: ",n)
+	if (n == "up"){
+		newDefeaterPosition = [xDefeaterPosition, yDefeaterPosition - 1]
+		defeaterIcon = '<img src="defeaterUp.png" alt="@" height="30" width"30">'
+	}
+	else if (n == "down"){
+		newDefeaterPosition = [xDefeaterPosition, yDefeaterPosition + 1]
+		defeaterIcon = '<img src="defeaterDown.png" alt="@" height="30" width"30">'
+	}
+	else if (n == "left"){
+		newDefeaterPosition = [xDefeaterPosition - 1, yDefeaterPosition]
+		defeaterIcon = '<img src="defeaterLeft.png" alt="@" height="30" width"30">'
+	}
+	else if (n == "right"){
+		newDefeaterPosition = [xDefeaterPosition + 1, yDefeaterPosition]
+		defeaterIcon = '<img src="defeaterRight.png" alt="@" height="30" width"30">'
+	}
+	else{ // Don't move
+		newDefeaterPosition = [xDefeaterPosition, yDefeaterPosition]
+	
+	}
+	if ((newDefeaterPosition[0] == -1) || (newDefeaterPosition[0] == size) ||(newDefeaterPosition[1] == -1) || (newDefeaterPosition[1] == size) || isIn(newDefeaterPosition,blockers)){
+		getDefeaterPosition(xDefeaterPosition,yDefeaterPosition)
+	}
+	else {
+		xDefeaterPosition = newDefeaterPosition[0]	
+		yDefeaterPosition = newDefeaterPosition[1]
+	}
+
+	console.log("New Defeater Position: [", xDefeaterPosition,",", yDefeaterPosition,"]")
+}
+
+for (var i = 0; i < 10;i++){
+getRunnerPosition();
+getDefeaterPosition()}
+
+function getBlockers(numberOfBlockers){
+	for (var n = 0; n < numberOfBlockers; n++){
+		var x = Math.round(randrange(0,(size - 1)));
+		var y = Math.round(randrange(0,(size - 1)));
+		var blockerPos = [x,y]
+		blockers.push(blockerPos);
+	}
+	//console.log("Blockers: ",blockers);
+}
+
+
+function isIn(item,arr) {    
+    for (var i = 0; i <= arr.length; i++) {
+		if (i >= arr.length) {return false}
+		else if (item.toString() == arr[i].toString()){return true}
+	}
+		return false;
+}
+var g = [[5,4],[4,7]]
+var t = [5,4]
+///console.log ("indexd: ",g.indexOf(t))
+//console.log ("IsIn() test: ",isIn([5,4],blockers))
+//console.log ("blocker 1 ", blockers[0])
+
+function isArray(Arr){
+	if (Arr instanceof Array) {
+		//console.log(true)
+	} else {
+		//console.log(false)
+	}
+}
+function randrange(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+for (var i = 0; i < blockers.length; i++) {
+    //console.log(blockers[i]);    
+}
+
+//console.log("Testing isIn: ",isIn("x",["x","y"]))
+</script>
