@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>I211 : towards a Javascript game</title>
+</head>
+<body>
+
+<script type="text/javascript">
+
+function MyArray2D (pWidth, pHeight) {
+  var lArray = new Array(pWidth);
+  for (var j=0; j < pWidth; j++) {
+     lArray[j] = new Array(pHeight);
+  }
+  return lArray;
+}
+
+var myArray = MyArray2D(2, 2);
+
+function run() {
+    alert("Here is an annoying pop-up!");
+}
+
+</script>
+
+
+<div id="hLabel">H</div>
+<div id="wLabel">W</div>
+
+<strong id="statusLabel">A Great Game!?!</strong>
+
+<table border="1" id="playfield">
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+</table>
+
+<input type="button" value="Play" onClick="run();">
+
+
+</body>
+</html>

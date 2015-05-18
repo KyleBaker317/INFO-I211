@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>I211 : Lab 13</title>
+</head>
+<body>
+
+<script type="text/javascript">
+
+function MyArray2D (pWidth, pHeight) {
+  var lArray = new Array(pWidth);
+  for (var j=0; j < pWidth; j++) {
+     lArray[j] = new Array(pHeight);
+  }
+  return lArray;
+}
+
+var myArray = MyArray2D(2, 2);
+
+function run() {
+
+    // 1) get the number of rows in the HTML table and "print it out":
+    // find the "playfield" table element in the HTML document:
+    var lTable = document.getElementById("playfield");
+    // then obtain the length of the list of rows in the table element:
+    var lTableHeight = lTable.rows.length;
+
+    // to display the obtained value, you can ...
+    //   ...create a variable in your Javascript function...
+    var myLabelH = document.getElementById("hLabel")
+    // ...to refer to the innerHTML of the element in the HTML document...
+    //    ...and update the innerHTML's value:
+    myLabelH.innerHTML = "h="+lTableHeight;
+
+    // 2) get the number of cells in one of the HTML table's rows:
+    var lTableWidth = lTable.rows[2].cells.length;
+    // to display the obtained value, you can also...
+    //   ...directly update the innerHTML value of an HTML element:
+    document.getElementById("wLabel").innerHTML = "w="+lTableWidth;
+}
+
+</script>
+
+<table border="1" id="playfield">
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+	<tr> <td></td><td></td><td></td><td></td><td></td> </tr>
+</table>
+
+
+<em id="statusLabel">Clicks: 0.</em>
+
+<input type="button" value="Add 1" id="one" onClick="run(this.id);">
+<input type="button" value="Add 2" id="two" onClick="run(this.id);">
+
+</body>
+</html>

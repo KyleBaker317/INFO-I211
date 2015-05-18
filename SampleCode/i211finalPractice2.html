@@ -1,0 +1,19 @@
+<html>
+  <head><title>I211 - Final Exam Practice 2</title></head>
+  <body>
+    <h3>I211 - Final Exam Practice 2</h3><hr>
+
+    <form method="post" action="finalPractice2.cgi">
+      <h5>Enter first and last name, then click 'Preview' to preview your data locally, and 'Submit' to send the data to the server.</h5>
+      <p>Name (first, last):
+        <input type="text" name="firstName">
+        <input type="text" name="lastName">
+      </p>
+      <input type="button" value="Preview" id="previewButton" onClick="run(this.id);">
+      <input type="submit" value="Submit">
+    </form>
+    <hr>
+    <em id="previewLabel">Name entered: none.</em>
+    <hr>
+  </body>
+</html>
